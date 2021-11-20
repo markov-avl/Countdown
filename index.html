@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Countdown</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="countdown">
+            <div class="container" id="minutes">
+                <img class="arrow up" src="svg/arrow-up.svg" alt="">
+                <div class="number" id="minutesValue">00</div>
+                <img class="arrow down" src="svg/arrow-down.svg" alt="">
+            </div>
+            <img class="divider" src="svg/divider.svg" alt="">
+            <div class="container" id="seconds">
+                <img class="arrow up" src="svg/arrow-up.svg" alt="">
+                <div class="number" id="secondsValue">00</div>
+                <img class="arrow down" src="svg/arrow-down.svg" alt="">
+            </div>
+            <img class="divider" src="svg/divider.svg" alt="">
+            <div class="container" id="milliseconds">
+                <img class="arrow up" src="svg/arrow-up.svg" alt="">
+                <div class="number" id="millisecondsValue">000</div>
+                <img class="arrow down" src="svg/arrow-down.svg" alt="">
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button id="start">START</button>
+            <button id="reset">RESET</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
