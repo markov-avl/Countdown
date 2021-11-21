@@ -75,3 +75,22 @@ button:hover {
 img {
     -webkit-user-drag: none;
 }
+
+.number {
+    animation-name: none;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes blinking {
+    0% {
+        color: black;
+    }
+    50% {
+        color: red;
+    }
+    100% {
+        color: black;
+    }
+}

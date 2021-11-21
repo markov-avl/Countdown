@@ -22,10 +22,7 @@ function setNumberValue(type, value) {
 }
 
 function getFormattedValue(value, length) {
-    while (value.length < length) {
-        value = `0${value}`
-    }
-    return value
+    return value.length < length ? `${"0".repeat(length - value.length)}${value}` : value
 }
 
 function isCountdownEmpty() {
@@ -42,14 +39,14 @@ function increase(type, max, length) {
     setNumberValue(type, getFormattedValue(value === max ? `0` : `${value + 1}`, length))
 }
 
-function decrease(type, max, length, delta = 1) {
+function decrease(type, max, length, step = 1) {
     let value = getNumberValue(type)
     if (value === 0) {
-        setNumberValue(type, getFormattedValue(`${max - delta + 1}`, length))
-    } else if (value <= delta) {
+        setNumberValue(type, getFormattedValue(`${max - step + 1}`, length))
+    } else if (value <= step) {
         setNumberValue(type, getFormattedValue("0", length))
     } else {
-        setNumberValue(type, getFormattedValue(`${value - delta}`, length))
+        setNumberValue(type, getFormattedValue(`${value - step}`, length))
     }
 }
 
@@ -59,14 +56,16 @@ function setArrowListeners(type, max, length) {
     let onIncrease = () => { increase(type, max, length) }
     let onDecrease = () => { decrease(type, max, length) }
     let onStart = (callback) => {
+        removeBlinking()
         lastValue = getNumberValue(type)
         onMouseDownInterval = setInterval(callback, 100)
     }
     let onStop = (callback) => {
-        if (onMouseDownInterval != null) {
+        if (onMouseDownInterval) {
             clearInterval(onMouseDownInterval)
             onMouseDownInterval = null
             if (getNumberValue(type) === lastValue) {
+                removeBlinking()
                 callback()
             }
         }
@@ -81,9 +80,7 @@ function setArrowListeners(type, max, length) {
 }
 
 function addArrowListeners() {
-    setArrowListeners(chain[0][0], chain[0][1], chain[0][2])
-    setArrowListeners(chain[1][0], chain[1][1], chain[1][2])
-    setArrowListeners(chain[2][0], chain[2][1], chain[2][2])
+    chain.map((element) => { setArrowListeners(element[0], element[1], element[2]) })
 }
 
 function removeArrowListeners() {
@@ -98,18 +95,24 @@ function stop() {
     isCountdownOn = false
 }
 
-function end() {
-    stop()
-    console.log('end');
+function setBlinking() {
+    [...document.getElementsByClassName('number')].map((number) => { number.style.animationName = 'blinking' })
 }
 
-function countdown(counter) {
-    if (counter < chain.length) {
-        decrease(chain[counter][0], chain[counter][1], chain[counter][2], counter ? 1 : 11)
-        if (getNumberValue(chain[counter][0]) === chain[counter][1]) {
-            countdown(counter + 1)
-        }
-    }
+function removeBlinking() {
+    [...document.getElementsByClassName('number')].map((number) => { number.style.animationName = 'none' })
+}
+
+function end() {
+    stop()
+    setBlinking()
+    console.log("COUNTDOWN ENDED");
+}
+
+function countdown(c) {
+    let step = c ? 1 : 11
+    decrease(chain[c][0], chain[c][1], chain[c][2], step)
+    getNumberValue(chain[c][0]) === chain[c][1] - step + 1 && c + 1 < chain.length ? countdown(c + 1) : null
 }
 
 function reset() {
@@ -117,20 +120,16 @@ function reset() {
         stop()
     }
     chain.map((element) => { setNumberValue(element[0], getFormattedValue("0", element[2])) })
+    removeBlinking()
 }
 
 function start() {
     if (isCountdownOn) {
         stop()
     } else {
+        removeBlinking()
         removeArrowListeners()
-        countdownInterval = setInterval(() => {
-            if (isCountdownEmpty()) {
-                end()
-            } else {
-                countdown(0)
-            }
-        }, 11)
+        countdownInterval = setInterval(() => { isCountdownEmpty() ? end() : countdown(0) }, 11)
         startButton.innerText = 'STOP'
         isCountdownOn = true
     }
